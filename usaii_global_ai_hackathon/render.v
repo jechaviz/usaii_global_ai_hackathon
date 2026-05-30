@@ -31,5 +31,44 @@ pub fn plan_markdown(plan CoachPlan) string {
 	for item in plan.guardrails {
 		lines << '- ${item}'
 	}
+	lines << ''
+	lines << '## Evidence Graph'
+	lines << ''
+	for node in plan.evidence_graph {
+		lines << '- ${node.status}: ${node.label} (${node.kind}) - ${node.evidence}'
+	}
+	return lines.join('\n') + '\n'
+}
+
+pub fn judge_mode_markdown(experiment ExperimentReport, readiness JudgeReadiness) string {
+	mut lines := []string{}
+	lines << '# Judge Mode'
+	lines << ''
+	lines << 'Track: ${readiness.track}'
+	lines << 'Overall judge readiness: ${readiness.overall}/100'
+	lines << 'Decision delta: +${experiment.decision_delta}'
+	lines << 'Risk reduction: ${experiment.risk_reduction}%'
+	lines << ''
+	lines << '## Rubric Fit'
+	lines << ''
+	lines << '| Weight | Dimension | Score | Evidence |'
+	lines << '|---:|---|---:|---|'
+	for score in readiness.scores {
+		lines << '| ${score.dimension.weight}% | ${score.dimension.label} | ${score.score} | ${score.dimension.evidence} |'
+	}
+	lines << ''
+	lines << '## Baseline Versus Coach'
+	lines << ''
+	lines << '| Student | Baseline | Coach | Risk Before | Risk After | Winning Signal |'
+	lines << '|---|---:|---:|---:|---:|---|'
+	for item in experiment.cases {
+		lines << '| ${item.student} | ${item.baseline_score} | ${item.coach_score} | ${item.risk_before} | ${item.risk_after} | ${item.winning_signal} |'
+	}
+	lines << ''
+	lines << '## Killer Demo Beats'
+	lines << ''
+	for item in readiness.killer_demo {
+		lines << '- ${item}'
+	}
 	return lines.join('\n') + '\n'
 }

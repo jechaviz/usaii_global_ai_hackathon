@@ -22,6 +22,7 @@ pub fn build_plan(profile StudentProfile) CoachPlan {
 		gaps:           skill_gaps(profile, best.opportunity)
 		plan:           plan_steps(best.opportunity)
 		guardrails:     responsible_ai_guardrails()
+		evidence_graph: evidence_graph(best.opportunity)
 		demo_claims:    demo_claims()
 	}
 }
@@ -128,9 +129,49 @@ fn plan_steps(opportunity Opportunity) []PlanStep {
 
 fn demo_claims() []string {
 	return [
-		'Turns vague student goals into an explainable work plan.',
+		'Turns vague student goals into an explainable decision ledger.',
 		'Produces portfolio evidence instead of only advice.',
 		'Keeps sensitive student identity and school proof out of public artifacts.',
-		'Supports responsible AI review through transparent scores, gaps, and warnings.',
+		'Supports responsible AI review through transparent scores, gaps, counterfactuals, and warnings.',
+	]
+}
+
+fn evidence_graph(opportunity Opportunity) []EvidenceNode {
+	return [
+		EvidenceNode{
+			id:       'input_goal'
+			label:    'Student-stated goal'
+			kind:     'input'
+			status:   'synthetic_demo'
+			evidence: 'Profile goals, interests, constraints and skill ratings.'
+		},
+		EvidenceNode{
+			id:       'skill_gap_score'
+			label:    'Skill-gap score'
+			kind:     'reasoning'
+			status:   'computed'
+			evidence: 'Required skills compared against current confidence.'
+		},
+		EvidenceNode{
+			id:       'portfolio_artifact'
+			label:    'Portfolio artifact'
+			kind:     'output'
+			status:   'planned'
+			evidence: opportunity.portfolio_artifact
+		},
+		EvidenceNode{
+			id:       'human_gate'
+			label:    'Human approval gate'
+			kind:     'control'
+			status:   'required'
+			evidence: 'Student approves outreach, public claims and sensitive data use.'
+		},
+		EvidenceNode{
+			id:       'judge_receipt'
+			label:    'Judge evidence receipt'
+			kind:     'evidence'
+			status:   'ready'
+			evidence: 'Generated experiment, readiness report and demo screenshots.'
+		},
 	]
 }

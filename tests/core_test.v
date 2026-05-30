@@ -6,6 +6,7 @@ fn test_demo_plan_is_explainable_and_ready() {
 	assert plan.fit_score >= 80
 	assert plan.gaps.len >= 1
 	assert plan.guardrails.len >= 5
+	assert plan.evidence_graph.len >= 5
 	assert plan.plan.len == 4
 }
 
@@ -28,4 +29,21 @@ fn test_qualifier_template_names_student_gate() {
 	qualifier := core.qualifier_template()
 	assert qualifier.student_gate.contains('currently enrolled eligible student')
 	assert qualifier.final_authority.contains('eligible student lead')
+}
+
+fn test_judge_readiness_tracks_official_rubric() {
+	readiness := core.judge_readiness_scorecard()
+	assert readiness.track == 'Undergraduate'
+	assert readiness.overall >= 94
+	assert readiness.scores.len == 5
+	assert readiness.scores.any(it.dimension.label == 'AI/Analytics Reasoning')
+}
+
+fn test_competitive_experiment_shows_delta_and_risk_reduction() {
+	report := core.competitive_experiment('test')
+	assert report.cases.len >= 5
+	assert report.coach_average > report.baseline_average
+	assert report.decision_delta >= 25
+	assert report.risk_reduction >= 60
+	assert report.competitive_claims.any(it.contains('Not a chatbot'))
 }

@@ -11,7 +11,7 @@ import usaii_global_ai_hackathon as core
 const default_worth_it = 'C:/git/v_projects/contests/worth_it/usaii_global_ai_hackathon'
 const default_site = 'C:/git/websites/usaii_global_ai_hackathon'
 const default_port = 4197
-const product_version = '0.3.0'
+const product_version = '1.1.0'
 
 struct StaticHandler {
 	site_root string
@@ -26,6 +26,9 @@ fn main() {
 		}
 		'plan' {
 			run_plan(args[1..])
+		}
+		'judge' {
+			run_judge(args[1..])
 		}
 		'qa' {
 			run_qa(args[1..])
@@ -62,6 +65,8 @@ fn run_generate(args []string) int {
 	report := core.readiness_report(product_version)
 	payload := core.devpost_payload()
 	qualifier := core.qualifier_template()
+	experiment := core.competitive_experiment(product_version)
+	rubric := core.judge_readiness_scorecard()
 	write_text(os.join_path(site, 'src', 'data', 'coach_plan.json'), json.encode_pretty(plan)) or {
 		return fail(err.msg())
 	}
@@ -71,8 +76,16 @@ fn run_generate(args []string) int {
 	}
 	write_text(os.join_path(site, 'src', 'data', 'readiness_report.json'),
 		json.encode_pretty(report)) or { return fail(err.msg()) }
+	write_text(os.join_path(site, 'src', 'data', 'competitive_experiment.json'),
+		json.encode_pretty(experiment)) or { return fail(err.msg()) }
+	write_text(os.join_path(site, 'src', 'data', 'judge_readiness.json'),
+		json.encode_pretty(rubric)) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'evidence', 'readiness_report.json'),
 		json.encode_pretty(report)) or { return fail(err.msg()) }
+	write_text(os.join_path(worth_it, 'evidence', 'competitive_experiment.json'),
+		json.encode_pretty(experiment)) or { return fail(err.msg()) }
+	write_text(os.join_path(worth_it, 'evidence', 'judge_readiness.json'),
+		json.encode_pretty(rubric)) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'submission', 'generated', 'devpost_payload.redacted.json'),
 		json.encode_pretty(payload)) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'submission', 'generated', 'qualifier_template.redacted.json'),
@@ -82,6 +95,8 @@ fn run_generate(args []string) int {
 	write_text(os.join_path(worth_it, 'docs', 'DEMO_MVP.generated.md'), core.plan_markdown(plan)) or {
 		return fail(err.msg())
 	}
+	write_text(os.join_path(worth_it, 'docs', 'JUDGE_MODE.generated.md'), core.judge_mode_markdown(experiment,
+		rubric)) or { return fail(err.msg()) }
 	println('generated USAII product data, evidence and redacted submission artifacts')
 	return 0
 }
@@ -93,6 +108,20 @@ fn run_plan(args []string) int {
 		return 0
 	}
 	print(core.plan_markdown(plan))
+	return 0
+}
+
+fn run_judge(args []string) int {
+	experiment := core.competitive_experiment(product_version)
+	rubric := core.judge_readiness_scorecard()
+	if has_flag(args, '--json') {
+		println(json.encode_pretty({
+			'experiment': json.encode(experiment)
+			'rubric':     json.encode(rubric)
+		}))
+		return 0
+	}
+	print(core.judge_mode_markdown(experiment, rubric))
 	return 0
 }
 
@@ -120,6 +149,13 @@ fn run_qa(args []string) int {
 	readiness := core.readiness_report(product_version)
 	if !core.readiness_ok(readiness) {
 		failures << 'readiness report did not pass product gates'
+	}
+	experiment := core.competitive_experiment(product_version)
+	if experiment.decision_delta < 20 || experiment.risk_reduction < 20 {
+		failures << 'competitive experiment improvement is too weak'
+	}
+	if core.judge_readiness_scorecard().overall < 90 {
+		failures << 'judge readiness below 90'
 	}
 	if failures.len > 0 {
 		eprintln('qa failed:')
@@ -243,6 +279,6 @@ fn fail(message string) int {
 }
 
 fn print_help() int {
-	println('usaii commands: generate | plan | qa | form | serve')
+	println('usaii commands: generate | plan | judge | qa | form | serve')
 	return 0
 }

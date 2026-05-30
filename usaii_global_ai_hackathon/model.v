@@ -57,7 +57,17 @@ pub:
 	gaps           []SkillGap
 	plan           []PlanStep
 	guardrails     []string
+	evidence_graph []EvidenceNode
 	demo_claims    []string
+}
+
+pub struct EvidenceNode {
+pub:
+	id       string
+	label    string
+	kind     string
+	status   string
+	evidence string
 }
 
 pub struct ReadinessReport {
@@ -102,4 +112,55 @@ pub:
 	data_boundary   string
 	student_gate    string
 	final_authority string
+}
+
+pub struct RubricDimension {
+pub:
+	id       string
+	label    string
+	weight   int
+	target   string
+	evidence string
+}
+
+pub struct RubricScore {
+pub:
+	dimension RubricDimension
+	score     int
+	rationale string
+}
+
+pub struct JudgeReadiness {
+pub:
+	track       string
+	overall     int
+	scores      []RubricScore
+	killer_demo []string
+}
+
+pub struct ExperimentCase {
+pub:
+	id             string
+	student        string
+	baseline_score int
+	coach_score    int
+	risk_before    int
+	risk_after     int
+	winning_signal string
+}
+
+pub struct ExperimentReport {
+pub:
+	generated_at       string
+	product            string
+	version            string
+	cases              []ExperimentCase
+	baseline_average   int
+	coach_average      int
+	decision_delta     int
+	risk_before_total  int
+	risk_after_total   int
+	risk_reduction     int
+	judge_takeaways    []string
+	competitive_claims []string
 }
