@@ -21,6 +21,8 @@ fn test_devpost_payload_is_redacted() {
 	payload := core.devpost_payload()
 	assert payload.qualifier_code == 'PRIVATE_REQUIRED_AFTER_QUALIFIER'
 	assert payload.final_submit_allowed == 'false'
+	assert payload.submission_url == core.public_demo_url
+	assert payload.source_repo_url == core.source_repo_url
 	assert payload.built_with.any(it == 'Vlang')
 	assert payload.description.contains('synthetic student profile')
 }

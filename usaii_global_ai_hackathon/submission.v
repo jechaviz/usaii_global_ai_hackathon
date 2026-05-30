@@ -7,7 +7,8 @@ pub fn devpost_payload() DevpostPayload {
 		built_with:           ['Vlang', 'Vue 3 CDN', 'UnoCSS', 'WAIBAv', 'Devpost']
 		team_size_required:   '2-5 eligible students'
 		qualifier_code:       'PRIVATE_REQUIRED_AFTER_QUALIFIER'
-		submission_url:       'REPLACE_WITH_PUBLIC_DEMO_URL'
+		submission_url:       public_demo_url
+		source_repo_url:      source_repo_url
 		video_url:            'REPLACE_WITH_3_TO_5_MIN_VIDEO_URL'
 		description:          'AI Study-to-Work Coach helps students decide what to learn next and what proof to build. The demo ingests a synthetic student profile, scores career-oriented opportunities, explains skill gaps, creates a four-week action plan, and keeps outreach or public portfolio changes behind human approval.'
 		ai_architecture:      'The MVP uses deterministic scoring for transparent demo behavior and is designed for LLM-assisted preference extraction, rubric generation, opportunity matching, and responsible AI critique during the hackathon build week.'

@@ -11,7 +11,7 @@ import usaii_global_ai_hackathon as core
 const default_worth_it = 'C:/git/v_projects/contests/worth_it/usaii_global_ai_hackathon'
 const default_site = 'C:/git/websites/usaii_global_ai_hackathon'
 const default_port = 4197
-const product_version = '1.1.0'
+const product_version = '1.2.1'
 
 struct StaticHandler {
 	site_root string

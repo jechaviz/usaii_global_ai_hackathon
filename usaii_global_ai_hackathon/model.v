@@ -4,6 +4,10 @@ pub const project_title = 'AI Study-to-Work Coach'
 pub const official_event = 'USAII Global AI Hackathon 2026'
 pub const internal_track = 'student_partner_track'
 pub const product_slug = 'usaii_global_ai_hackathon'
+pub const public_demo_url = 'https://jechaviz.github.io/usaii_global_ai_hackathon_web/'
+pub const source_repo_url = 'https://github.com/jechaviz/usaii_global_ai_hackathon'
+pub const web_repo_url = 'https://github.com/jechaviz/usaii_global_ai_hackathon_web'
+pub const contest_repo_url = 'https://github.com/jechaviz/usaii_global_ai_hackathon_contest'
 
 pub struct StudentProfile {
 pub:
@@ -91,6 +95,7 @@ pub:
 	team_size_required   string
 	qualifier_code       string
 	submission_url       string
+	source_repo_url      string
 	video_url            string
 	description          string
 	ai_architecture      string
