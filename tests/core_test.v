@@ -33,6 +33,17 @@ fn test_qualifier_template_names_student_gate() {
 	assert qualifier.final_authority.contains('eligible student lead')
 }
 
+fn test_qualifier_rehearsal_matches_official_shape() {
+	rehearsal := core.qualifier_rehearsal()
+	assert rehearsal.question_count == 8
+	assert rehearsal.estimated_minutes == 30
+	assert 'Health & Wellbeing' in rehearsal.themes
+	assert 'Sustainability' in rehearsal.themes
+	assert 'Community' in rehearsal.themes
+	assert rehearsal.questions.any(it.id == 'q8_build_window')
+	assert rehearsal.stop_gates.any(it.contains('fake student accounts'))
+}
+
 fn test_judge_readiness_tracks_official_rubric() {
 	readiness := core.judge_readiness_scorecard()
 	assert readiness.track == 'Undergraduate'

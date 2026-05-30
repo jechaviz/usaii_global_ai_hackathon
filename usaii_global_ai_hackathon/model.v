@@ -119,6 +119,28 @@ pub:
 	final_authority string
 }
 
+pub struct QualifierQuestion {
+pub:
+	id             string
+	theme          string
+	prompt         string
+	winning_signal string
+	risk_check     string
+	evidence_hint  string
+}
+
+pub struct QualifierRehearsal {
+pub:
+	generated_at      string
+	product           string
+	question_count    int
+	estimated_minutes int
+	themes            []string
+	questions         []QualifierQuestion
+	coach_rules       []string
+	stop_gates        []string
+}
+
 pub struct RubricDimension {
 pub:
 	id       string

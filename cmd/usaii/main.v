@@ -11,7 +11,7 @@ import usaii_global_ai_hackathon as core
 const default_worth_it = 'C:/git/v_projects/contests/worth_it/usaii_global_ai_hackathon'
 const default_site = 'C:/git/websites/usaii_global_ai_hackathon'
 const default_port = 4197
-const product_version = '1.2.1'
+const product_version = '1.3.0'
 
 struct StaticHandler {
 	site_root string
@@ -65,6 +65,7 @@ fn run_generate(args []string) int {
 	report := core.readiness_report(product_version)
 	payload := core.devpost_payload()
 	qualifier := core.qualifier_template()
+	rehearsal := core.qualifier_rehearsal()
 	experiment := core.competitive_experiment(product_version)
 	rubric := core.judge_readiness_scorecard()
 	write_text(os.join_path(site, 'src', 'data', 'coach_plan.json'), json.encode_pretty(plan)) or {
@@ -90,6 +91,10 @@ fn run_generate(args []string) int {
 		json.encode_pretty(payload)) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'submission', 'generated', 'qualifier_template.redacted.json'),
 		json.encode_pretty(qualifier)) or { return fail(err.msg()) }
+	write_text(os.join_path(worth_it, 'evidence', 'qualifier_rehearsal.json'),
+		json.encode_pretty(rehearsal)) or { return fail(err.msg()) }
+	write_text(os.join_path(worth_it, 'submission', 'qualifier_rehearsal_kit.md'),
+		core.qualifier_rehearsal_markdown(rehearsal)) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'submission', 'qualifier_response_template.md'),
 		core.qualifier_markdown()) or { return fail(err.msg()) }
 	write_text(os.join_path(worth_it, 'docs', 'DEMO_MVP.generated.md'), core.plan_markdown(plan)) or {
@@ -156,6 +161,10 @@ fn run_qa(args []string) int {
 	}
 	if core.judge_readiness_scorecard().overall < 90 {
 		failures << 'judge readiness below 90'
+	}
+	rehearsal := core.qualifier_rehearsal()
+	if rehearsal.question_count != 8 || rehearsal.themes.len != 3 {
+		failures << 'qualifier rehearsal does not match official practice shape'
 	}
 	if failures.len > 0 {
 		eprintln('qa failed:')
